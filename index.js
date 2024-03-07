@@ -29,10 +29,8 @@ app.use('*', (req, res) => {
 //Error middleware
 //this middleware runs when any error occur during the processing of requests.
 //unexpected errors, server errors, mongo errors,
-app.use((err, req, res, next) => {
-    console.log(err);
-    return res.status(500).json({ msg: 'something went wrong' });
-});
+import errorHandlingMiddleware from './middlewares/errorHandling.middleware.js';
+app.use(errorHandlingMiddleware);
 
 //server settings
 const PORT = process.env.PORT || 5100;
