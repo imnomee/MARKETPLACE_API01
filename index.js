@@ -1,3 +1,4 @@
+import 'express-async-errors';
 import express from 'express';
 const app = express();
 
@@ -35,6 +36,16 @@ app.use((err, req, res, next) => {
 
 //server settings
 const PORT = process.env.PORT || 5100;
-app.listen(PORT, () => {
-    console.log(`Server is running on port: ${PORT}...`);
-});
+//mongoose settings
+//if no errorrs, we are connected with DB
+import mongoose from 'mongoose';
+try {
+    await mongoose.connect(process.env.MONGO_URI);
+    app.listen(PORT, () => {
+        console.log(`Server is running on port: ${PORT}...`);
+    });
+} catch (err) {
+    console.log(err);
+    //if any error exit the process
+    process.exit(1);
+}

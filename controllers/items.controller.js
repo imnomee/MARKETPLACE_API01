@@ -1,73 +1,59 @@
-//internal items for testing
-import { nanoid } from 'nanoid';
-import { items } from '../items.js';
+import Item from '../models/Item.Model.js';
 
-//this file holds the function we use to process requests
-//passed to the items router
+//add new item
+export const addItem = async (req, res) => {
+    const { title, condition, brand, color, price, postage } = req.body;
+    const newItem = await Item.create({
+        title,
+        condition,
+        brand,
+        color,
+        price,
+        postage,
+    });
+    return res.status(201).json(newItem);
+};
 
-export const getAllItems = (req, res) => {
+//get all items
+export const getAllItems = async (req, res) => {
+    const items = await Item.find();
     return res.status(200).json({ length: items.length, items });
 };
 
-export const addItem = (req, res) => {
-    const { title, condition, brand, color, price, postage } = req.body;
-    if (!title || !condition || !brand || !color || !price || !postage) {
-        return res
-            .status(400)
-            .json({ msg: 'please provide all the required details' });
-    }
-    //generate a random 10 characters nanoid
-    const id = nanoid(10);
-    const newItem = { id, title, condition, brand, color, price, postage };
-    items.push(newItem);
-    return res
-        .status(201)
-        .json({ totla: items.length, msg: 'item added', newItem });
-};
-
-export const getSingleItem = (req, res) => {
-    //find the job by id, that comes from the params
-    //req.params holds the item provided in url
+//get single item
+export const getSingleItem = async (req, res) => {
     const { id } = req.params;
-    const item = items.find((it) => it.id === id);
+    const item = await Item.findById(id);
     if (!item) {
         return res.status(404).json({ msg: `no item with the id: ${id}...` });
     }
 
-    return res.status(200).json(items);
+    return res.status(200).json(item);
 };
 
-export const editItem = (req, res) => {
+//edit item
+export const editItem = async (req, res) => {
     const { title, condition, brand, color, price, postage } = req.body;
 
     const { id } = req.params;
-    const item = items.find((it) => it.id === id);
-    if (!item) {
+    const updatedItem = await Item.findByIdAndUpdate(id, req.body, {
+        new: true,
+    });
+
+    if (!updatedItem) {
         return res.status(404).json({ msg: `no item with the id: ${id}...` });
     }
 
-    item.title = title;
-    item.condition = condition;
-    item.brand = brand;
-    item.color = color;
-    item.price = price;
-    item.postage = postage;
-
-    return res.status(200).json({ msg: 'item updated', item });
+    return res.status(200).json({ msg: 'item updated', updatedItem });
 };
 
-export const deleteItem = (req, res) => {
+//delete item
+export const deleteItem = async (req, res) => {
     const { id } = req.params;
-    const deletedItem = items.find((it) => it.id === id);
+    const deletedItem = await Item.findByIdAndDelete(id);
     if (!deletedItem) {
         return res.status(404).json({ msg: `no item with the id: ${id}...` });
     }
-    //filter out the items and remove the ones provided
-    const newItems = items.filter((it) => it.id !== id);
-    //set the filtered items to the default one
-    //this wont work here because we have imported the items array
-    //unless the array is in the same file, it won't let us assign
-    //filteredarray to the imported array
-    items = newItems;
+
     return res.status(200).json({ msg: 'item deleted', deletedItem });
 };
