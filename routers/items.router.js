@@ -1,3 +1,4 @@
+import { validateItemInput } from '../middlewares/validation.middleware.js';
 import { Router } from 'express';
 import {
     addItem,
@@ -13,7 +14,7 @@ import {
 const router = Router();
 
 //get all items & add an item
-router.route('/').get(getAllItems).post(addItem);
+router.route('/').get(getAllItems).post(validateItemInput, addItem);
 
 //get an item, update and item & delete and item
 router.route('/:id').get(getSingleItem).patch(editItem).delete(deleteItem);

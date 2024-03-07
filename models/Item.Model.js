@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { ITEM_CONDITION, ITEM_POSTAGE } from '../utils/constants.js';
 
 const ItemSchema = new mongoose.Schema(
     {
@@ -7,8 +8,8 @@ const ItemSchema = new mongoose.Schema(
         },
         condition: {
             type: String,
-            enum: ['new', 'used', 'like-new'],
-            default: 'used',
+            enum: Object.values(ITEM_CONDITION),
+            default: ITEM_CONDITION.USED,
         },
         description: String,
         category: String,
@@ -22,8 +23,8 @@ const ItemSchema = new mongoose.Schema(
         },
         postage: {
             type: String,
-            enum: ['delivery', 'collection'],
-            default: 'collection',
+            enum: Object.values(ITEM_POSTAGE),
+            default: ITEM_POSTAGE.COLLECTION,
         },
     },
     {
