@@ -11,6 +11,9 @@
     "author": "Nomee",
     "license": "ISC",
     "dependencies": {
-        "express": "^4.18.3"
+        "dotenv": "^16.4.5",
+        "express": "^4.18.3",
+        "morgan": "^1.10.0",
+        "nanoid": "^5.0.6"
     }
 }
