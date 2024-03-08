@@ -67,6 +67,16 @@ export const validateRegisterInput = withValidationErrors([
         .withMessage('password lenght can be between 8 and 12 characters'),
 ]);
 
+//validate User login inputs
+export const validateLoginInput = withValidationErrors([
+    body('email')
+        .notEmpty()
+        .withMessage('email is required')
+        .isEmail()
+        .withMessage('invalid email'),
+    body('password').notEmpty().withMessage('password is required'),
+]);
+
 //validate the item id of mongo when we edit delete or find an id
 //without this we cannot give correct error if the id format is incorrect
 export const validateIdParam = withValidationErrors([
