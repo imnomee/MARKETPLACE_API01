@@ -1,6 +1,8 @@
-import { body, validationResult } from 'express-validator';
-import { BadRequestError } from '../errors/custom.errors.js';
+import { body, validationResult, param } from 'express-validator';
+import { BadRequestError, NotFoundError } from '../errors/custom.errors.js';
 import { ITEM_CONDITION, ITEM_POSTAGE } from '../utils/constants.js';
+import mongoose from 'mongoose';
+import Item from '../models/Item.Model.js';
 
 const withValidationErrors = (validateValues) => {
     return [
@@ -9,6 +11,9 @@ const withValidationErrors = (validateValues) => {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
                 const errorMessages = errors.array().map((error) => error.msg);
+                if (errorMessages[0].startsWith('no job')) {
+                    throw new NotFoundError(errorMessages);
+                }
                 throw new BadRequestError(errorMessages);
             }
             next();
@@ -16,6 +21,7 @@ const withValidationErrors = (validateValues) => {
     ];
 };
 
+//validate the inputs of items when creating a new item
 export const validateItemInput = withValidationErrors([
     body('title')
         .notEmpty()
@@ -35,4 +41,16 @@ export const validateItemInput = withValidationErrors([
     body('postage')
         .isIn(Object.values(ITEM_POSTAGE))
         .withMessage('invalid postage'),
+]);
+
+//validate the item id of mongo when we edit delete or find an id
+//without this we cannot give correct error if the id format is incorrect
+export const validateIdParam = withValidationErrors([
+    param('id').custom(async (id) => {
+        const isValidId = mongoose.Types.ObjectId.isValid(id);
+        if (!isValidId) throw new BadRequestError('invalid id');
+
+        const item = await Item.findById(id);
+        if (!item) throw new NotFoundError(`no job with id : ${id}...`);
+    }),
 ]);

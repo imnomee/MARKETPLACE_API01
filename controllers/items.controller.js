@@ -26,7 +26,6 @@ export const getAllItems = async (req, res) => {
 export const getSingleItem = async (req, res) => {
     const { id } = req.params;
     const item = await Item.findById(id);
-    if (!item) throw new NotFoundError(`no job with id ${id}...`);
 
     return res.status(StatusCodes.OK).json(item);
 };
@@ -40,8 +39,6 @@ export const editItem = async (req, res) => {
         new: true,
     });
 
-    if (!updatedItem) throw new NotFoundError(`no item with the id: ${id}...`);
-
     return res
         .status(StatusCodes.OK)
         .json({ msg: 'item updated', updatedItem });
@@ -51,7 +48,6 @@ export const editItem = async (req, res) => {
 export const deleteItem = async (req, res) => {
     const { id } = req.params;
     const deletedItem = await Item.findByIdAndDelete(id);
-    if (!deletedItem) throw new NotFoundError(`no item with the id: ${id}...`);
 
     return res
         .status(StatusCodes.OK)
