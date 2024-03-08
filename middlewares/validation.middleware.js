@@ -3,6 +3,7 @@ import { BadRequestError, NotFoundError } from '../errors/custom.errors.js';
 import { ITEM_CONDITION, ITEM_POSTAGE } from '../utils/constants.js';
 import mongoose from 'mongoose';
 import Item from '../models/Item.Model.js';
+import User from '../models/User.Model.js';
 
 const withValidationErrors = (validateValues) => {
     return [
@@ -41,6 +42,29 @@ export const validateItemInput = withValidationErrors([
     body('postage')
         .isIn(Object.values(ITEM_POSTAGE))
         .withMessage('invalid postage'),
+]);
+
+//validate the userlogin inputs so we only forward the required fields in the body
+export const validateRegisterInput = withValidationErrors([
+    body('username').notEmpty().withMessage('username is required'),
+    body('email')
+        .notEmpty()
+        .withMessage('email is required')
+        .isEmail()
+        .withMessage('invalid email format')
+        .custom(async (email) => {
+            const user = await User.findOne({ email });
+            if (user) {
+                throw new BadRequestError(
+                    'user with this email already exist.'
+                );
+            }
+        }),
+    body('password')
+        .notEmpty()
+        .withMessage('password is required')
+        .isLength({ min: 8, max: 12 })
+        .withMessage('password lenght can be between 8 and 12 characters'),
 ]);
 
 //validate the item id of mongo when we edit delete or find an id

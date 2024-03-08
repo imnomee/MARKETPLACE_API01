@@ -17,6 +17,9 @@ app.use(express.json());
 import itemsRouter from './routers/items.router.js';
 app.use('/api/v1/items', itemsRouter);
 
+import authRouter from './routers/auth.router.js';
+app.use('/api/v1/auth', authRouter);
+
 //not found middleware
 //this middleware runs when the route entered is not found in the app
 //page not found, undefined route etc
