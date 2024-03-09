@@ -13,9 +13,16 @@ app.use(morgan('dev'));
 //makes the app accept json
 app.use(express.json());
 
+//cookie parser
+import cookieParser from 'cookie-parser';
+app.use(cookieParser());
+
 //routes
+import { authenticateUser } from './middlewares/auth.middleware.js';
+//if the user is logged in, they can go through item Routes
+//all item routes, including, get, create, patch and delete
 import itemsRouter from './routers/items.router.js';
-app.use('/api/v1/items', itemsRouter);
+app.use('/api/v1/items', authenticateUser, itemsRouter);
 
 import authRouter from './routers/auth.router.js';
 app.use('/api/v1/auth', authRouter);
@@ -40,6 +47,7 @@ const PORT = process.env.PORT || 5100;
 //mongoose settings
 //if no errorrs, we are connected with DB
 import mongoose from 'mongoose';
+import { cookie } from 'express-validator';
 try {
     await mongoose.connect(process.env.MONGO_URI);
     app.listen(PORT, () => {

@@ -4,15 +4,12 @@ import { NotFoundError } from '../errors/custom.errors.js';
 
 //add new item
 export const addItem = async (req, res) => {
-    const { title, condition, brand, color, price, postage } = req.body;
-    const newItem = await Item.create({
-        title,
-        condition,
-        brand,
-        color,
-        price,
-        postage,
-    });
+    //when we are creating/adding the item,
+    //there is no way to set who created the item.
+    //so we get the userId from the cookie/token we created when user logged in
+    //and add that userId with the item
+    req.body.createdBy = req.user.userId;
+    const newItem = await Item.create(req.body);
     return res.status(StatusCodes.CREATED).json(newItem);
 };
 

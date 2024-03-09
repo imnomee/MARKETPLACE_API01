@@ -26,6 +26,10 @@ const ItemSchema = new mongoose.Schema(
             enum: Object.values(ITEM_POSTAGE),
             default: ITEM_POSTAGE.COLLECTION,
         },
+        createdBy: {
+            type: mongoose.Types.ObjectId,
+            ref: 'User',
+        },
     },
     {
         timestamps: true,
