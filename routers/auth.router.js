@@ -1,3 +1,5 @@
+//this router is only for registering users, logging in users and logging out users
+
 import { Router } from 'express';
 import {
     registerUser,

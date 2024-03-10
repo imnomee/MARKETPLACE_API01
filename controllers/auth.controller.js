@@ -1,4 +1,5 @@
-//this file holds the register and login authorization methods
+//this file holds only the register and login authorization and logout methods
+
 import User from '../models/User.Model.js';
 import { StatusCodes } from 'http-status-codes';
 import { hashPassword, comparePassword } from '../utils/passwordUtils.js';

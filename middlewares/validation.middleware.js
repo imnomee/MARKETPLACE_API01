@@ -1,5 +1,9 @@
 import { body, validationResult, param } from 'express-validator';
-import { BadRequestError, NotFoundError } from '../errors/custom.errors.js';
+import {
+    BadRequestError,
+    NotFoundError,
+    UnauthorizedError,
+} from '../errors/custom.errors.js';
 import { ITEM_CONDITION, ITEM_POSTAGE } from '../utils/constants.js';
 import mongoose from 'mongoose';
 import Item from '../models/Item.Model.js';
@@ -79,6 +83,8 @@ export const validateLoginInput = withValidationErrors([
 
 //validate the item id of mongo when we edit delete or find an id
 //without this we cannot give correct error if the id format is incorrect
+//we will only use this validation of Id for items only and not users
+//so we check if the item id is valid
 export const validateIdParam = withValidationErrors([
     param('id').custom(async (id) => {
         const isValidId = mongoose.Types.ObjectId.isValid(id);
@@ -86,5 +92,33 @@ export const validateIdParam = withValidationErrors([
 
         const item = await Item.findById(id);
         if (!item) throw new NotFoundError(`no job with id : ${id}...`);
+
+        //if the role is admin, which comes from logged in cookie
+        const isAdmin = (req.user.role = 'admin');
+        const isOwner = req.user.userId === item.createdBy.toString();
+
+        //if the user is not admin or the owner of the item
+        //he is not authorized for this item route
+        if (!isAdmin && !isOwner) {
+            throw new UnauthorizedError('not authorized to access this route');
+        }
     }),
+]);
+
+//validate the update user inputs so we only forward the required fields in the body
+export const validateUpdateUserInput = withValidationErrors([
+    body('username').notEmpty().withMessage('username is required'),
+    body('email')
+        .notEmpty()
+        .withMessage('email is required')
+        .isEmail()
+        .withMessage('invalid email format')
+        .custom(async (email) => {
+            const user = await User.findOne({ email });
+            if (user && user._id.toString() !== req.user.userId) {
+                throw new BadRequestError(
+                    'user with this email already exist.'
+                );
+            }
+        }),
 ]);

@@ -24,8 +24,13 @@ import { authenticateUser } from './middlewares/auth.middleware.js';
 import itemsRouter from './routers/items.router.js';
 app.use('/api/v1/items', authenticateUser, itemsRouter);
 
+//auth router
 import authRouter from './routers/auth.router.js';
 app.use('/api/v1/auth', authRouter);
+
+//user router
+import userRouter from './routers/users.router.js';
+app.use('/api/v1/users', authenticateUser, userRouter);
 
 //not found middleware
 //this middleware runs when the route entered is not found in the app
