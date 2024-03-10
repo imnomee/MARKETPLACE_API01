@@ -63,6 +63,13 @@ npm run dev
 -   [Update Item - PATCH](http://localhost:5100/api/v1/items/:id)
 -   [Delete Item - DELETE ](http://localhost:5100/api/v1/items/:id)
 
+## Notes
+
+-   When we register the first user, the role is automatically set as an Admin
+-   An admin can delete the user, get all users, get application stats
+-   An admin cannot delete other admin
+-   A user can add products and see all products, delete own products and update their own products
+
 ## Team
 
 | [Nomee](https://github.com/imnomee)

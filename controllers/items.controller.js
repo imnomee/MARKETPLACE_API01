@@ -29,8 +29,6 @@ export const getSingleItem = async (req, res) => {
 
 //edit item
 export const editItem = async (req, res) => {
-    const { title, condition, brand, color, price, postage } = req.body;
-
     const { id } = req.params;
     const updatedItem = await Item.findByIdAndUpdate(id, req.body, {
         new: true,
