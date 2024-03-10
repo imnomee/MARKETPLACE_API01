@@ -4,7 +4,6 @@
 import { StatusCodes } from 'http-status-codes';
 import User from '../models/User.Model.js';
 import Item from '../models/Item.Model.js';
-import { logoutUser } from './auth.controller.js';
 import { ForbiddenError, NotFoundError } from '../errors/custom.errors.js';
 
 //get currently logged in user
@@ -45,7 +44,7 @@ export const deleteUser = async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         if (user.role !== 'admin') {
-            const deletedUser = await User.findByIdAndDelete(req.params.id);
+            const deletedUser = await user.deleteOne();
             return res
                 .status(StatusCodes.OK)
                 .json({ msg: 'user deleted', deletedUser });
