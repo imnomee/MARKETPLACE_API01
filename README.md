@@ -36,7 +36,7 @@ To fix a bug or enhance an existing module, follow these steps:
 npm install
 ```
 
-## Create and add following in the .env file
+## Create and add following in the .env file with your own details
 
 1. Add MongoDB connection string as MONGO_URI
 2. Add jwt secret as JWT_SECRET
